@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import requests
 import json
 def fetch_wiki_payload(query_string):
@@ -26,11 +27,13 @@ def fetch_wiki_payload(query_string):
 print("The termipedia has been intiated...")
 while True:
     data_req = input("Welcome User!, what article do you want from wiki? ")
-
     if data_req == "":
         print("Try again!")
     else:
         break
 
 data = fetch_wiki_payload(data_req)
-print(json.dumps(data, indent=2))
+article_html = data["parse"]["text"]["*"] #Getting only the hmtl part
+soup = BeautifulSoup(article_html, "html.parser") #HTML string --> Navigable Object(soup object)
+clean_text = soup.get_text() #Returns only text content
+print(clean_text)
