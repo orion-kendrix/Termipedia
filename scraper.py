@@ -23,8 +23,24 @@ def fetch_wiki_payload(query_string):
         return response.json()
     else:
         raise ConnectionError(f"Failed: {response.status_code}")
+    
+def clean_article_html(article_html):
+    #HTML string --> Navigable Object(soup object)
+    soup = BeautifulSoup(article_html, "html.parser")
+    for tag in soup.find_all("style"):
+        tag.decompose()
 
-print("The termipedia has been intiated...")
+    #Removing css classes
+    for junk in soup.find_all(class_ = ["reference", "references", "mw-editsection", "ambox", "navbox", "reflist", "external"]):
+        junk.decompose() 
+
+    #Returns only text content
+    raw_text = soup.get_text(separator="\n") 
+    lines = [line.strip() for line in raw_text.splitlines() if line.strip()] 
+    clean_text = "\n".join(lines)
+    return clean_text
+
+print("The Termipedia has been intiated...")
 while True:
     data_req = input("Welcome User!, what article do you want from wiki? ")
     if data_req == "":
@@ -33,7 +49,6 @@ while True:
         break
 
 data = fetch_wiki_payload(data_req)
-article_html = data["parse"]["text"]["*"] #Getting only the hmtl part
-soup = BeautifulSoup(article_html, "html.parser") #HTML string --> Navigable Object(soup object)
-clean_text = soup.get_text() #Returns only text content
-print(clean_text)
+article_html = data["parse"]["text"]["*"] #Getting only the html part
+readable = clean_article_html(article_html)
+print(readable)
