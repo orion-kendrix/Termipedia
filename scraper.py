@@ -11,7 +11,7 @@ def fetch_wiki_payload(query_string):
     "prop" : "text",
     "redirects" : "true"
     }
-    #What the request looks like to the client
+    #What the request looks like to the client, metadata of the request
     headers = {
         "User-Agent": "Termipedia/1.0 (academic project)" #Who is making the request
     }
@@ -36,7 +36,12 @@ def clean_article_html(article_html):
 
     #Returns only text content
     raw_text = soup.get_text(separator="\n") 
-    lines = [line.strip() for line in raw_text.splitlines() if line.strip()] 
+    lines = []
+    for line in raw_text.splitlines():
+        stripped = line.strip()
+        if stripped:
+            lines.append(stripped)
+
     clean_text = "\n".join(lines)
     return clean_text
 
