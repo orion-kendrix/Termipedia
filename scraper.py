@@ -31,21 +31,20 @@ def clean_article_html(article_html):
         tag.decompose()
 
     #Removing css classes
-    for junk in soup.find_all(class_ = ["reference", "references", "mw-editsection", "ambox", "navbox", "reflist", "external"]):
+    for junk in soup.find_all(class_ = ["reference", "references", "mw-editsection", "ambox", "navbox", "reflist", "external", "infobox"]):
         junk.decompose() 
-
-    #Returns only text content
-    raw_text = soup.get_text(separator="\n") 
-    lines = []
-    for line in raw_text.splitlines():
-        stripped = line.strip()
-        if stripped:
+    
+    raw_text = soup.get_text(separator="\n") #Returns only text content and individual elements would be on a different line
+    lines = [] #start with an empty list
+    for line in raw_text.splitlines(): #go through each line
+        stripped = line.strip() #remove whitespace from the ends
+        if stripped: #if anything is left (not empty)...
             lines.append(stripped)
-
+                                          
     clean_text = "\n".join(lines)
     return clean_text
 
-print("The Termipedia has been intiated...")
+print("The Termipedia has been initiated...")
 while True:
     data_req = input("Welcome User!, what article do you want from wiki? ")
     if data_req == "":
