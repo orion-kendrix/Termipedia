@@ -27,22 +27,23 @@ def fetch_wiki_payload(query_string):
 def clean_article_html(article_html):
     #HTML string --> Navigable Object(soup object)
     soup = BeautifulSoup(article_html, "html.parser")
+
+    #Removing style tgs.
     for tag in soup.find_all("style"):
         tag.decompose()
 
     #Removing css classes
-    for junk in soup.find_all(class_ = ["reference", "references", "mw-editsection", "ambox", "navbox", "reflist", "external", "infobox"]):
+    for junk in soup.find_all(class_ = ["reference", "references", "mw-editsection", "ambox", "navbox", "reflist", "external", "infobox", "navbar", "metadata", "side-box", "sidebar", "vertical-navbox", "sistersitebox"]):
         junk.decompose() 
-    
-    raw_text = soup.get_text(separator="\n") #Returns only text content and individual elements would be on a different line
-    lines = [] #start with an empty list
-    for line in raw_text.splitlines(): #go through each line
-        stripped = line.strip() #remove whitespace from the ends
-        if stripped: #if anything is left (not empty)...
-            lines.append(stripped)
-                                          
-    clean_text = "\n".join(lines)
-    return clean_text
+    list_of_req = []
+    for text in soup.find_all(["p", "h2", "h3", "li", "h1", "h4", "h5", "\n"]):
+        temp = text.get_text().strip()
+        if temp and temp not in ["References", "External links", "Works cited", "Further reading", "Notes", "See also"]: #Returns only text content and individual elements would be on a different line
+            if text.name in ["h1", "h2", "h3", "h4", "h5"]:
+                list_of_req.append("\n" + temp)
+            else:
+                list_of_req.append(temp)
+    return "\n".join(list_of_req)
 
 print("The Termipedia has been initiated...")
 while True:
