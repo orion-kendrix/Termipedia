@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from pathlib import Path
 import requests
 import json
 def fetch_wiki_payload(query_string):
@@ -36,7 +37,7 @@ def clean_article_html(article_html):
     for junk in soup.find_all(class_ = ["reference", "references", "mw-editsection", "ambox", "navbox", "reflist", "external", "infobox", "navbar", "metadata", "side-box", "sidebar", "vertical-navbox", "sistersitebox"]):
         junk.decompose() 
     list_of_req = []
-    for text in soup.find_all(["p", "h2", "h3", "li", "h1", "h4", "h5", "\n"]):
+    for text in soup.find_all(["p", "h2", "h3", "li", "h1", "h4", "h5"]):
         temp = text.get_text().strip()
         if temp and temp not in ["References", "External links", "Works cited", "Further reading", "Notes", "See also"]: #Returns only text content and individual elements would be on a different line
             if text.name in ["h1", "h2", "h3", "h4", "h5"]:
@@ -44,6 +45,25 @@ def clean_article_html(article_html):
             else:
                 list_of_req.append(temp)
     return "\n".join(list_of_req)
+        
+def get_article(data_req):
+    my_file = Path(f"history_cache/{data_req}.md")
+
+    # Cache hit: read from disk, skip the network
+    if my_file.exists():
+        print("The file already exists in history_cache, here it is!")
+        with open(my_file, "r", encoding="utf-8") as file:
+            return file.read()
+
+    # Cache miss: fetch, clean, save, return
+    data = fetch_wiki_payload(data_req)
+    article_html = data["parse"]["text"]["*"]
+    readable = clean_article_html(article_html)
+
+    Path("history_cache").mkdir(exist_ok=True)
+    with open(my_file, "w", encoding="utf-8") as file:
+        file.write(readable)
+    return readable
 
 print("The Termipedia has been initiated...")
 while True:
@@ -52,8 +72,6 @@ while True:
         print("Try again!")
     else:
         break
+final = get_article(data_req)
+print(final)
 
-data = fetch_wiki_payload(data_req)
-article_html = data["parse"]["text"]["*"] #Getting only the html part
-readable = clean_article_html(article_html)
-print(readable)
