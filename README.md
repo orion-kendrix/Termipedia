@@ -16,16 +16,16 @@ You type a search term. Termipedia fetches that article from Wikipedia, strips t
 
 Three layers, each doing one job:
 
-- **Fetching** (`fetch_wiki_payload`) — calls the Wikipedia API with the search term, using a custom `User-Agent` header (without it, Wikipedia returns a 403 and refuses the request). Returns the article as JSON.
-- **Cleaning** (`clean_article_html`) — parses the HTML with BeautifulSoup, removes the junk (references, infoboxes, navigation boxes, sidebars), then extracts text block by block so sentences stay intact. The order matters: remove junk first, extract text second.
-- **Caching** (`get_article`) — before fetching, checks whether the article is already saved locally. If yes, reads from disk. If no, fetches, cleans, saves, and returns it.
+- **Fetching** (`fetch_wiki_payload`):- calls the Wikipedia API with the search term, using a custom `User-Agent` header (without it, Wikipedia returns a 403 and refuses the request). Returns the article as JSON.
+- **Cleaning** (`clean_article_html`):- parses the HTML with BeautifulSoup, removes the junk (references, infoboxes, navigation boxes, sidebars), then extracts text block by block so sentences stay intact. The order matters: remove junk first, extract text second.
+- **Caching** (`get_article`):- before fetching, checks whether the article is already saved locally. If yes, reads from disk. If no, fetches, cleans, saves, and returns it.
 
 ## Built with
 
 - Python
-- [`requests`](https://pypi.org/project/requests/) — HTTP requests to the Wikipedia API
-- [`beautifulsoup4`](https://pypi.org/project/beautifulsoup4/) — HTML parsing and cleaning
-- `pathlib` — file handling for the cache
+- [`requests`](https://pypi.org/project/requests/):- HTTP requests to the Wikipedia API
+- [`beautifulsoup4`](https://pypi.org/project/beautifulsoup4/):- HTML parsing and cleaning
+- `pathlib`:- file handling for the cache
 
 ## How to run it
 - git clone https://github.com/orion-kendrix/Termipedia
@@ -37,9 +37,9 @@ Three layers, each doing one job:
 
 ## Current status
 
-- ✅ CLI version working — fetch, clean, and local caching all functional
-- 🚧 Textual TUI (interactive terminal interface) — in progress
-- 📋 Planned — ArXiv support, global launch command
+- ✅ CLI version working:- fetch, clean, and local caching all functional
+- 🚧 Textual TUI (interactive terminal interface):- in progress
+- 📋 Planned:- ArXiv support, global launch command
 
 ## What I learned
 I learned how the actual API requests work behind the browser environment, how the request is created and sent. I also came across a error 403 access denied bug while doing this because I did not include a header
